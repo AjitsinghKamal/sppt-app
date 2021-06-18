@@ -1,7 +1,10 @@
 import { StrictMode } from 'react';
 import { render } from 'react-dom';
+
 import AppRouter from './pages/Router';
-import './index.css';
+
+import './styles/reset.css';
+import './styles/index.css';
 
 render(
 	<StrictMode>
