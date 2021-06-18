@@ -22,7 +22,8 @@
 			"jest",
 			"@testing-library/jest-dom",
 			"vite/client"
-		]
+		],
+		"baseUrl": "."
 	},
 	"include": [
 		"./src"

@@ -1,11 +1,11 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
+import { StrictMode } from 'react';
+import { render } from 'react-dom';
+import AppRouter from './pages/Router';
 import './index.css';
-import App from './App';
 
-ReactDOM.render(
-	<React.StrictMode>
-		<App />
-	</React.StrictMode>,
+render(
+	<StrictMode>
+		<AppRouter />
+	</StrictMode>,
 	document.querySelector('#root')
 );
