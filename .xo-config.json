@@ -1,0 +1,15 @@
+{
+	"ignores": ["./setup-tests.ts", "./jest.config.js"],
+	"prettier": true,
+	"rules": {
+		"unicorn/filename-case": [
+			"error",
+			{
+				"cases": {
+					"kebabCase": true,
+					"pascalCase": true
+				}
+			}
+		]
+	}
+}
