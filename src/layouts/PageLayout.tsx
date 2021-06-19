@@ -1,3 +1,4 @@
+import { css } from '@emotion/css';
 import { PropsWithChildren } from 'react';
 import { Header } from 'src/components';
 
@@ -10,7 +11,11 @@ type Props = unknown;
  * TODO: configure helmet
  */
 function PageLayout({ children }: PropsWithChildren<Props>) {
-	return <div>{children}</div>;
+	return <main className={page}>{children}</main>;
 }
 
+const page = css`
+	max-width: 900px;
+	width: 100%;
+`;
 export default PageLayout;

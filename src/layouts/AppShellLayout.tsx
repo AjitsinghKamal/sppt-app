@@ -1,3 +1,4 @@
+import { css } from '@emotion/css';
 import { PropsWithChildren } from 'react';
 import { Header } from 'src/components';
 
@@ -17,9 +18,16 @@ function AppShellLayout({ children }: PropsWithChildren<Props>) {
 	return (
 		<div>
 			<Header />
-			<div>{children}</div>
+			<div className={content}>{children}</div>
 		</div>
 	);
 }
+
+const content = css`
+	padding: var(--header-h) 32px 32px;
+	display: flex;
+	align-items: center;
+	flex-direction: column;
+`;
 
 export default AppShellLayout;

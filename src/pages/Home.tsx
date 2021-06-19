@@ -1,19 +1,16 @@
 import { PageLayout } from 'src/layouts';
 import { useEventList } from 'src/apis/ApiEvents';
+import { EventList } from 'src/components';
 
 function HomePage() {
-	const { response, status, error } = useEventList();
-	console.log(response);
+	const { response, status, error } = useEventList({ dependencies: [] });
 	return (
 		<PageLayout>
-			<div>
-				<ul>
-					{response &&
-						response.items.map((item) => {
-							return <p key={item.id}>{item.position.name}</p>;
-						})}
-				</ul>
-			</div>
+			<EventList
+				list={response?.items || []}
+				total={response?.pagination.count}
+				offset={response?.pagination.offset}
+			/>
 		</PageLayout>
 	);
 }

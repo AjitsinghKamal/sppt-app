@@ -1,3 +1,4 @@
 :root {
 	@extend %palette;
+	--header-h: 80px;
 }
