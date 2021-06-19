@@ -12,9 +12,9 @@ export class HttpError {
 	}
 }
 
-type FetchOptions = {
+export type FetchOptions<ParamsType> = {
 	method?: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'HEAD' | 'DELETE';
-	params?: any;
+	params?: ParamsType;
 	paramsEncoder?: any;
 	body?: any;
 	headers?: Record<string, string>;
@@ -32,23 +32,21 @@ type FetchOptions = {
  * @param headers fetch accepted headers
  *
  */
-async function Http<ResponseType>(
+async function Http<ParamsType, ResponseType>(
 	url: string,
-	config: FetchOptions = {
+	config: FetchOptions<ParamsType> = {
 		method: 'GET',
-		params: '',
 		headers: {},
 	}
 ) {
 	const { method, params, headers, paramsEncoder, body, ...rest } = config;
 
 	const fetchOptions: Omit<
-		FetchOptions,
+		FetchOptions<ParamsType>,
 		'params' | 'paramsEncoder' | 'body'
 	> = {
 		method: method,
 		headers: {
-			'Content-Type': 'application/json',
 			...headers,
 		},
 		...rest,

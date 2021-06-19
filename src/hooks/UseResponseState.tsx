@@ -3,12 +3,11 @@ import { HttpError } from 'src/apis/http';
 
 //#region typedef
 type RequestState = 'DONE' | 'WAITING' | 'ERROR' | null;
-type RequestError = Record<string, string[]>;
 
 type HttpRequestState<ResponseType> = {
 	response?: ResponseType;
 	status: RequestState;
-	error?: HttpError;
+	error?: HttpError | HttpError[];
 };
 
 type Action<ResponseType> =
@@ -21,12 +20,12 @@ type Action<ResponseType> =
 			payload: {
 				response?: ResponseType;
 				status?: RequestState;
-				error?: any;
+				error?: HttpRequestState<ResponseType>['error'];
 			};
 	  }
 	| {
 			type: 'error';
-			payload: RequestError;
+			payload: HttpRequestState<ResponseType>['error'];
 	  }
 	| {
 			type: 'response';
@@ -38,16 +37,12 @@ type Action<ResponseType> =
 
 //#endregion typedef
 
-const initialState: HttpRequestState<undefined> = {
-	response: undefined,
-	error: undefined,
-	status: null,
-};
+type ReducerType<T> = (
+	state: HttpRequestState<T>,
+	action: Action<T>
+) => HttpRequestState<T>;
 
-function Reducer<ResponseType>(
-	state: HttpRequestState<ResponseType>,
-	action: Action<ResponseType>
-): HttpRequestState<ResponseType> {
+const Reducer: <K>() => ReducerType<K> = () => (state, action) => {
 	switch (action.type) {
 		case 'status':
 		case 'response':
@@ -66,8 +61,13 @@ function Reducer<ResponseType>(
 		default:
 			return state;
 	}
-}
+};
 
+const initialState = {
+	response: undefined,
+	error: undefined,
+	status: null,
+};
 /**
  * A specialized hook for managing fetch responses in component state
  *
@@ -92,16 +92,21 @@ function Reducer<ResponseType>(
  * @returns dispatch - state modifier
  *
  */
-function useHttp<ResponseType>() {
-	const [responseState, dispatch] = useReducer(Reducer, initialState);
+function useResponseState<ResponseType>() {
+	const [responseState, dispatch] = useReducer<ReducerType<ResponseType>>(
+		Reducer(),
+		initialState
+	);
 
-	return useMemo(
+	const state = useMemo(
 		() => ({
 			dispatch,
 			responseState,
 		}),
-		[responseState.status]
+		[JSON.stringify(responseState)]
 	);
+
+	return state;
 }
 
-export default useHttp;
+export default useResponseState;
