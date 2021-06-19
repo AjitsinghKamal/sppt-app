@@ -1,5 +1,7 @@
 @import './palette';
 @import './tokens';
+@import './datepicker';
+
 body {
 	margin: 0;
 	color: #444;
@@ -9,7 +11,7 @@ body {
 	font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
 		Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
 		'Segoe UI Symbol';
-	background: #f2f2f2;
+	background: var(--white400);
 	word-wrap: break-word;
 	font-kerning: normal;
 	-webkit-font-smoothing: antialiased;

@@ -8,21 +8,21 @@ export type Props = {
 };
 function List({ children, total, offset }: PropsWithChildren<Props>) {
 	return (
-		<div className={__container}>
-			<ul className={__list}>{children}</ul>
+		<div className={container}>
+			<ul className={list}>{children}</ul>
 			<Button>Load More</Button>
 		</div>
 	);
 }
 
-const __container = css`
-	margin: 12px;
+const container = css`
+	margin: 12px 0;
 	display: flex;
 	flex-direction: column;
 	align-items: center;
 `;
 
-const __list = css`
+const list = css`
 	align-self: stretch;
 `;
 

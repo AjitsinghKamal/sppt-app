@@ -1,0 +1,14 @@
+@import 'react-date-range/dist/styles.css';
+@import 'react-date-range/dist/theme/default.css';
+
+.rdrDefinedRangesWrapper {
+	display: none;
+}
+
+.rdrCalendarWrapper.rdrDateRangeWrapper {
+	width: 280px;
+	/* .rdrMonthAndYearWrapper,
+	.rdrMonths.rdrMonthsHorizontal {
+		display: none;
+	} */
+}

@@ -8,13 +8,13 @@ type Props = {
 };
 function EventItem({ title, start, end, color }: Props) {
 	return (
-		<div className={__card}>
+		<div className={card}>
 			<p>{title}</p>
 		</div>
 	);
 }
 
-const __card = css`
+const card = css`
 	box-shadow: rgba(0, 0, 0, 0.08) 0px 4px 12px;
 	padding: 16px;
 	border-radius: 10px;

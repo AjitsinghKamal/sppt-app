@@ -1,6 +1,5 @@
 import List, { Props as ListProps } from './List';
 import EventItem from './EventItem';
-
 import { EventListResponse } from 'src/apis/ApiEvents';
 import { css } from '@emotion/css';
 
@@ -12,7 +11,7 @@ function EventList({ list, ...listProps }: Props) {
 	return (
 		<List {...listProps}>
 			{list.map((event) => (
-				<li key={event.id} className={__item}>
+				<li key={event.id} className={item}>
 					<EventItem
 						title={event.position.name}
 						start={event.startsAt}
@@ -25,7 +24,7 @@ function EventList({ list, ...listProps }: Props) {
 	);
 }
 
-const __item = css`
+const item = css`
 	margin: 24px 0;
 `;
 export default EventList;

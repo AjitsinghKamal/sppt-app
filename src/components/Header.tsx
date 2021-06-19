@@ -1,11 +1,11 @@
 import { css } from '@emotion/css';
 
 function Header() {
-	return <header className={__base}></header>;
+	return <header className={base}></header>;
 }
 
 //#region styles
-const __base = css`
+const base = css`
 	height: var(--header-h);
 	position: fixed;
 	top: 0;
