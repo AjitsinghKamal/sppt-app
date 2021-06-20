@@ -18,5 +18,6 @@ const page = css`
 	max-width: 900px;
 	width: 100%;
 	flex: 1;
+	position: relative;
 `;
 export default PageLayout;

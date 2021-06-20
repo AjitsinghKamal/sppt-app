@@ -1,8 +1,9 @@
 import { css } from '@emotion/css';
-import { Link, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { useEventDetails } from 'src/apis/ApiEvents';
-import { Avatar, TimeSlot } from 'src/components';
+import { Avatar, TimeSlot, BackNav } from 'src/components';
 import { PageLayout } from 'src/layouts';
+import { ReactComponent as Spinner } from 'src/assets/spinner.svg';
 
 function EventDetailsPage() {
 	const { eventId } = useParams<{ eventId: string }>();
@@ -14,36 +15,49 @@ function EventDetailsPage() {
 
 	return (
 		<PageLayout>
-			<header className={head}>
-				<nav className={nav}>
-					<Link to="/">Go Back to Events List</Link>
-				</nav>
-				<h1>Details</h1>
-				<h3>{response && response.position?.name}</h3>
-				<div className={schedule}>
-					<TimeSlot type="start" time={response?.startsAt} />
-					<TimeSlot type="end" time={response?.endsAt} />
+			{error ? (
+				<div className={notfound}>
+					<h2>Event not found :(</h2>
+					<BackNav />
 				</div>
-			</header>
-			<section className={list__container}>
-				<h4>Employees</h4>
-				<ul className={list}>
-					{employees.length
-						? employees.map((employee) => (
-								<li key={employee.id} className={card}>
-									<Avatar
-										src={employee.image}
-										name={employee.firstName}
-									/>
-									<p className={name}>
-										<span>{employee.firstName}</span>
-										<strong>{employee.lastName}</strong>
-									</p>
-								</li>
-						  ))
-						: null}
-				</ul>
-			</section>
+			) : status === 'WAITING' ? (
+				<Spinner width={48} className={loader} />
+			) : (
+				<>
+					<header className={head}>
+						<BackNav wrapperClass={nav} />
+						<h1>Details</h1>
+						<h3>{response && response.position?.name}</h3>
+						<div className={schedule}>
+							<TimeSlot type="start" time={response?.startsAt} />
+							<TimeSlot type="end" time={response?.endsAt} />
+						</div>
+					</header>
+					<section className={list__container}>
+						<h4>Employees</h4>
+						<ul className={list}>
+							{employees.length
+								? employees.map((employee) => (
+										<li key={employee.id} className={card}>
+											<Avatar
+												src={employee.image}
+												name={employee.firstName}
+											/>
+											<p className={name}>
+												<span>
+													{employee.firstName}
+												</span>
+												<strong>
+													{employee.lastName}
+												</strong>
+											</p>
+										</li>
+								  ))
+								: null}
+						</ul>
+					</section>
+				</>
+			)}
 		</PageLayout>
 	);
 }
@@ -56,12 +70,6 @@ const head = css`
 	& > h3 {
 		color: var(--primary500);
 	}
-`;
-
-const nav = css`
-	position: absolute;
-	top: 25%;
-	right: 0;
 `;
 
 const list__container = css`
@@ -94,5 +102,25 @@ const schedule = css`
 	display: grid;
 	grid-template-columns: repeat(2, 300px);
 	margin: 12px 0;
+`;
+
+const notfound = css`
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	transform: translateY(100%);
+`;
+
+const loader = css`
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+`;
+const nav = css`
+	position: absolute;
+	top: 25%;
+	right: 0;
 `;
 export default EventDetailsPage;

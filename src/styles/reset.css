@@ -26,6 +26,7 @@ summary {
 }
 
 a {
+	color: inherit;
 	background-color: transparent;
 	-webkit-text-decoration-skip: objects;
 }

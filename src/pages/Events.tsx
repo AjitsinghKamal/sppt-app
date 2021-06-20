@@ -117,7 +117,9 @@ function EventsPage() {
 						Showing<span>{items.length}</span>of
 						<span>{pagination?.count}</span>
 					</p>
-				) : null}
+				) : (
+					'Getting Events...'
+				)}
 				<EventDatePicker
 					onSelect={handleDateSelect}
 					startDate={selectedDates.startDate}
