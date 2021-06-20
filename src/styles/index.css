@@ -1,6 +1,5 @@
 @import './palette';
 @import './tokens';
-@import './datepicker';
 
 body {
 	margin: 0;
