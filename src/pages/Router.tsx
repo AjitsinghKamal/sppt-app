@@ -13,7 +13,7 @@ function Router() {
 			<AppShellLayout>
 				<Switch>
 					<Route path="/">
-						<AsyncPage page="Home" />
+						<AsyncPage page="Events" />
 					</Route>
 				</Switch>
 			</AppShellLayout>

@@ -31,19 +31,26 @@ const ApiModuleComposer = <FetchParamsType, FetchResponseType>(
 		};
 	}
 
-	const request = async (requestConfig: FetchOptions<FetchParamsType>) => {
+	const request = async (
+		requestConfig: FetchOptions<FetchParamsType>,
+		noAutoResponseUpdate?: boolean
+	) => {
 		dispatch({ type: 'fetch' });
 		try {
 			const response = await Http<FetchParamsType, FetchResponseType>(
 				url,
 				{ ...restOptions, ...requestConfig }
 			);
-			dispatch({
-				type: 'update',
-				payload: {
-					response,
-				},
-			});
+			if (noAutoResponseUpdate) {
+				return response;
+			} else {
+				dispatch({
+					type: 'update',
+					payload: {
+						response,
+					},
+				});
+			}
 		} catch (error) {
 			dispatch({
 				type: 'update',
@@ -62,6 +69,7 @@ const ApiModuleComposer = <FetchParamsType, FetchResponseType>(
 		() => ({
 			...responseState,
 			request,
+			dispatch,
 		}),
 		[request, responseState]
 	);

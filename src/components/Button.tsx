@@ -1,9 +1,9 @@
 import { css, cx } from '@emotion/css';
-import { PropsWithChildren, DOMAttributes } from 'react';
+import { PropsWithChildren, HTMLAttributes } from 'react';
 
 export type Props = {
 	type?: 'solid' | 'outline' | 'ghost';
-} & DOMAttributes<HTMLButtonElement>;
+} & HTMLAttributes<HTMLButtonElement>;
 
 function Button({
 	children,
@@ -24,12 +24,15 @@ function Button({
 }
 
 const btn = css`
+	--width: 'auto';
 	padding: 12px 24px;
 	border-radius: 10px;
 	font-weight: 600;
 	transition: box-shadow 0.3s;
 	display: inline-flex;
 	align-items: center;
+	width: var(--width);
+	justify-content: center;
 `;
 
 const btn__solid = css`

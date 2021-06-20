@@ -1,5 +1,5 @@
 import { css } from '@emotion/css';
-import { PropsWithChildren } from 'react';
+import { PropsWithChildren, useState, useEffect } from 'react';
 import { Button } from 'src/components';
 
 import { ReactComponent as Spinner } from 'src/assets/spinner.svg';
@@ -7,17 +7,29 @@ import { ReactComponent as Spinner } from 'src/assets/spinner.svg';
 export type Props = {
 	showNotFound?: boolean;
 	showLoader?: boolean;
-	showNextLoader?: boolean;
+	onLoadMore?: () => void;
+	hasMore?: boolean;
 };
 function List({
 	children,
 	showNotFound,
 	showLoader,
-	showNextLoader,
+	onLoadMore,
+	hasMore,
 }: PropsWithChildren<Props>) {
+	const [isNextLoading, setNextLoading] = useState(false);
+
+	const handleLoadMore = () => {
+		setNextLoading(true);
+		onLoadMore && onLoadMore();
+	};
+	useEffect(() => {
+		!showLoader && isNextLoading && setNextLoading(false);
+	}, [showLoader]);
+
 	return (
 		<div className={container}>
-			{showLoader ? (
+			{showLoader && !isNextLoading ? (
 				<div className={loader}>
 					<Spinner width={32} />
 				</div>
@@ -26,7 +38,20 @@ function List({
 			) : (
 				<>
 					<ul className={list}>{children}</ul>
-					<Button>Load More</Button>
+					{hasMore ? (
+						<Button
+							onClick={handleLoadMore}
+							style={{
+								['--width' as any]: '200px',
+							}}
+						>
+							{isNextLoading ? (
+								<Spinner width={24} />
+							) : (
+								'Load More'
+							)}
+						</Button>
+					) : null}
 				</>
 			)}
 		</div>

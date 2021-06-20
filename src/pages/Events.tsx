@@ -13,7 +13,7 @@ type State = {
 	endDate?: Date;
 };
 function HomePage() {
-	const { response, status, request } = useEventList({
+	const { response, status, request, dispatch } = useEventList({
 		dependencies: [],
 	});
 	const [selectedDates, setDates] = useState<State>({
@@ -21,13 +21,36 @@ function HomePage() {
 		endDate: undefined,
 	});
 
-	const shouldFetchEvents = (params: State) => {
-		request({
-			params: {
-				startsAt: params.startDate && formatISO(params.startDate),
-				endsAt: params.endDate && formatISO(params.endDate),
-			},
-		});
+	const shouldFetchEvents = async (
+		params: State & { offset?: number; noAutoUpdate?: boolean }
+	) => {
+		try {
+			const data = await request(
+				{
+					params: {
+						offset: params.offset,
+						startsAt:
+							params.startDate && formatISO(params.startDate),
+						endsAt: params.endDate && formatISO(params.endDate),
+					},
+				},
+				!!params.noAutoUpdate
+			);
+			if (params.noAutoUpdate && data) {
+				const existingItems = response?.items || [];
+				dispatch({
+					type: 'update',
+					payload: {
+						response: {
+							items: [...existingItems, ...data.items],
+							pagination: data.pagination,
+						},
+					},
+				});
+			}
+		} catch (e) {
+			console.log(e);
+		}
 	};
 
 	const handleDateSelect = useCallback<EventDatePickerProps['onSelect']>(
@@ -39,6 +62,18 @@ function HomePage() {
 		},
 		[selectedDates, setDates]
 	);
+
+	const handleLoadMore = useCallback(() => {
+		if (response && response.pagination) {
+			const { offset, limit, count } = response.pagination;
+			const next = offset + limit;
+			next < count &&
+				shouldFetchEvents({
+					offset: next,
+					noAutoUpdate: true,
+				});
+		}
+	}, [response?.pagination]);
 
 	useEffect(() => {
 		if (!selectedDates.startDate && !selectedDates.endDate) {
@@ -73,6 +108,7 @@ function HomePage() {
 				loading={status === 'WAITING'}
 				list={response?.items}
 				pagination={response?.pagination}
+				onNext={handleLoadMore}
 			/>
 		</PageLayout>
 	);
