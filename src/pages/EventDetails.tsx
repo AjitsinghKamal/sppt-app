@@ -98,7 +98,7 @@ const name = css`
 
 const schedule = css`
 	display: grid;
-	grid-template-columns: repeat(auto-fit, minmax(100px, 160px));
+	grid-template-columns: repeat(auto-fit, minmax(150px, 200px));
 	grid-gap: 12px;
 	margin: 12px 0;
 `;
