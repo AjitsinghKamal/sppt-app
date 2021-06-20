@@ -13,7 +13,7 @@ type State = {
 	endDate?: Date;
 };
 function EventsPage() {
-	const { response, status, request, dispatch } = useEventList({
+	const { response, status, request, error, dispatch } = useEventList({
 		dependencies: [],
 		params: {
 			limit: 10,
@@ -112,13 +112,15 @@ function EventsPage() {
 		<PageLayout>
 			<h1 className={page__title}>All Events</h1>
 			<div className={filterbar}>
-				{response ? (
+				{error ? (
+					<p>Something went wrong</p>
+				) : response ? (
 					<p className={filterbar__meta}>
 						Showing<span>{items.length}</span>of
 						<span>{pagination?.count}</span>
 					</p>
 				) : (
-					'Getting Events...'
+					<p>Getting Events...</p>
 				)}
 				<EventDatePicker
 					onSelect={handleDateSelect}
@@ -148,12 +150,14 @@ const filterbar = css`
 	top: var(--header-h);
 	padding: 6px 0;
 	z-index: 10;
+	flex-flow: row wrap;
 	box-shadow: 0 0 0 10px var(--white400);
 `;
 
 const filterbar__meta = css`
 	font-weight: 300;
 	opacity: 0.8;
+	margin-right: 12px;
 	& > span {
 		margin: 0 5px;
 		font-weight: 400;

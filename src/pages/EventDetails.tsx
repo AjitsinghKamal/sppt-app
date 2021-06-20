@@ -87,7 +87,7 @@ const card = css`
 
 const list = css`
 	display: grid;
-	grid-template-columns: repeat(5, 1fr);
+	grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
 	grid-gap: 24px;
 	margin-top: 24px;
 `;
@@ -100,7 +100,8 @@ const name = css`
 
 const schedule = css`
 	display: grid;
-	grid-template-columns: repeat(2, 300px);
+	grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+	grid-gap: 12px;
 	margin: 12px 0;
 `;
 
@@ -122,5 +123,8 @@ const nav = css`
 	position: absolute;
 	top: 25%;
 	right: 0;
+	@media screen and (max-width: 480px) {
+		position: relative;
+	}
 `;
 export default EventDetailsPage;

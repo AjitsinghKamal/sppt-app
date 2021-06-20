@@ -16,13 +16,17 @@ type Props = unknown;
  */
 function AppShellLayout({ children }: PropsWithChildren<Props>) {
 	return (
-		<div>
+		<div className={container}>
 			<Header />
 			<div className={content}>{children}</div>
 		</div>
 	);
 }
 
+const container = css`
+	width: 100vw;
+	overflow-x: hidden;
+`;
 const content = css`
 	padding: var(--header-h) 32px 32px;
 	display: flex;

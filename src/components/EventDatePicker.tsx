@@ -83,6 +83,7 @@ function EventDatePicker({ onSelect, startDate, endDate }: Props) {
 
 const container = css`
 	position: relative;
+	max-width: 100%;
 `;
 
 const action = css`
