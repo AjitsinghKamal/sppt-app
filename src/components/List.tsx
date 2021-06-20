@@ -59,7 +59,7 @@ function List({
 }
 
 const container = css`
-	margin: 12px 0;
+	margin: 12px 0 24px;
 	display: flex;
 	flex-direction: column;
 	align-items: center;

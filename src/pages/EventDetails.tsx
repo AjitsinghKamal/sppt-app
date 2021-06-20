@@ -7,7 +7,7 @@ import { ReactComponent as Spinner } from 'src/assets/spinner.svg';
 
 function EventDetailsPage() {
 	const { eventId } = useParams<{ eventId: string }>();
-	const { response, status, error } = useEventDetails({
+	const { response, error } = useEventDetails({
 		dependencies: [],
 		path: `/${eventId}`,
 	});
@@ -20,9 +20,7 @@ function EventDetailsPage() {
 					<h2>Event not found :(</h2>
 					<BackNav />
 				</div>
-			) : status === 'WAITING' ? (
-				<Spinner width={48} className={loader} />
-			) : (
+			) : response ? (
 				<>
 					<header className={head}>
 						<BackNav wrapperClass={nav} />
@@ -34,29 +32,29 @@ function EventDetailsPage() {
 						</div>
 					</header>
 					<section className={list__container}>
-						<h4>Employees</h4>
+						<h4>People</h4>
 						<ul className={list}>
-							{employees.length
-								? employees.map((employee) => (
-										<li key={employee.id} className={card}>
-											<Avatar
-												src={employee.image}
-												name={employee.firstName}
-											/>
-											<p className={name}>
-												<span>
-													{employee.firstName}
-												</span>
-												<strong>
-													{employee.lastName}
-												</strong>
-											</p>
-										</li>
-								  ))
-								: null}
+							{employees.length ? (
+								employees.map((employee) => (
+									<li key={employee.id} className={card}>
+										<Avatar
+											src={employee.image}
+											name={employee.firstName}
+										/>
+										<p className={name}>
+											<span>{employee.firstName}</span>
+											<strong>{employee.lastName}</strong>
+										</p>
+									</li>
+								))
+							) : (
+								<p>No one assigned to this event!</p>
+							)}
 						</ul>
 					</section>
 				</>
+			) : (
+				<Spinner width={48} className={loader} />
 			)}
 		</PageLayout>
 	);
@@ -87,7 +85,7 @@ const card = css`
 
 const list = css`
 	display: grid;
-	grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+	grid-template-columns: repeat(auto-fit, minmax(150px, 220px));
 	grid-gap: 24px;
 	margin-top: 24px;
 `;
@@ -100,7 +98,7 @@ const name = css`
 
 const schedule = css`
 	display: grid;
-	grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+	grid-template-columns: repeat(auto-fit, minmax(100px, 160px));
 	grid-gap: 12px;
 	margin: 12px 0;
 `;
