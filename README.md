@@ -1,4 +1,5 @@
-This project was bootstrapped with [Vite](https://vitejs.dev/) as Development with Vite is fast compared to `Create-React-App` as well as more configurabable.
+This project was bootstrapped with [Vite](https://vitejs.dev/). Vite is quite fast compared to `Create-React-App` with the option of easy configuration without `ejecting`. The only major issue while using it is that getting `Jest` to work with it can get a bit tricky when your code is using `import.meta` 
+
 
 ## Getting Started
 
