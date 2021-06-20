@@ -12,7 +12,9 @@ function TimeSlot({ type, time }: Props) {
 	return (
 		<div className={container}>
 			{type === 'start' ? <Lit width={16} /> : <Ban width={16} />}
-			<span>{time ? format(new Date(time), 'MMM dd, yyyy') : '-'}</span>
+			<span title={`${type} at`}>
+				{time ? format(new Date(time), 'MMM dd, yyyy') : '-'}
+			</span>
 		</div>
 	);
 }

@@ -147,6 +147,7 @@ const filterbar = css`
 	background: var(--white400);
 	top: var(--header-h);
 	padding: 6px 0;
+	z-index: 10;
 	box-shadow: 0 0 0 10px var(--white400);
 `;
 
