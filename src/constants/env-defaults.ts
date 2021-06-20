@@ -19,3 +19,6 @@ export const AUTH_SECRET = btoa(
 		import.meta.env.VITE_AUTH_PASSWORD
 	}`
 );
+
+export const IS_PROD = import.meta.env.PROD;
+export const IS_DEV = import.meta.env.DEV;

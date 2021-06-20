@@ -15,7 +15,6 @@
 		"date-fns": "^2.22.1",
 		"qs": "^6.10.1",
 		"react": "^17.0.0",
-		"react-day-picker": "^7.4.10",
 		"react-dom": "^17.0.0",
 		"react-router-dom": "^5.2.0"
 	},

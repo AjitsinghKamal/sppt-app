@@ -3,15 +3,14 @@ import { useCallback, useEffect, useState } from 'react';
 import { PageLayout } from 'src/layouts';
 import { useEventList } from 'src/apis/ApiEvents';
 import { EventList, EventDatePicker } from 'src/components';
-import type { EventDatePickerProps } from 'src/components';
 
 import { css } from '@emotion/css';
-import { formatISO } from 'date-fns';
 
 type State = {
-	startDate?: Date;
-	endDate?: Date;
+	startDate?: string;
+	endDate?: string;
 };
+
 function EventsPage() {
 	const { response, status, request, error, dispatch } = useEventList({
 		dependencies: [],
@@ -47,9 +46,8 @@ function EventsPage() {
 					params: {
 						limit: 10,
 						offset: params.offset,
-						startsAt:
-							params.startDate && formatISO(params.startDate),
-						endsAt: params.endDate && formatISO(params.endDate),
+						startsAt: params.startDate,
+						endsAt: params.endDate,
 					},
 				},
 				!!params.noAutoUpdate
@@ -82,7 +80,7 @@ function EventsPage() {
 		}
 	};
 
-	const handleDateSelect = useCallback<EventDatePickerProps['onSelect']>(
+	const handleDateSelect = useCallback(
 		(key, selection) => {
 			setDates({
 				...selectedDates,
@@ -91,6 +89,13 @@ function EventsPage() {
 		},
 		[selectedDates, setDates]
 	);
+
+	const resetDateSelect = useCallback(() => {
+		setDates({
+			startDate: undefined,
+			endDate: undefined,
+		});
+	}, []);
 
 	const handleLoadMore = useCallback(() => {
 		if (pagination) {
@@ -124,6 +129,7 @@ function EventsPage() {
 				)}
 				<EventDatePicker
 					onSelect={handleDateSelect}
+					onReset={resetDateSelect}
 					startDate={selectedDates.startDate}
 					endDate={selectedDates.endDate}
 				/>

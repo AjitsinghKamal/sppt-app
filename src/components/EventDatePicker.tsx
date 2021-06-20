@@ -1,82 +1,77 @@
-import { useCallback } from 'react';
+import { ChangeEvent, useMemo } from 'react';
 import { css, cx } from '@emotion/css';
+import { formatISO } from 'date-fns';
 
-import DayPickerInput from 'react-day-picker/DayPickerInput';
-
-import { ReactComponent as CalendarIcon } from 'src/assets/calendar.svg';
-import { ReactComponent as CloseIcon } from 'src/assets/close.svg';
-
-import Button, { Props as ButtonProps } from './Button';
+import Button from './Button';
+import { ReactComponent as FilterIcon } from 'src/assets/filter.svg';
 
 export type Props = {
-	onSelect: (key: 'startDate' | 'endDate', day?: Date) => void;
-	startDate?: Date;
-	endDate?: Date;
+	onSelect: (key: string, day?: string) => void;
+	onReset: () => void;
+	startDate?: string;
+	endDate?: string;
 };
 
-const Clear = (props: ButtonProps) => (
-	<Button type="ghost" {...props}>
-		<CloseIcon width={14} />
-	</Button>
-);
+function EventDatePicker({ onSelect, onReset, startDate, endDate }: Props) {
+	const onDateSelect = (dateEvent: ChangeEvent<HTMLInputElement>) => {
+		const {
+			currentTarget: { valueAsDate, name },
+		} = dateEvent;
+		onSelect(name, valueAsDate ? formatISO(valueAsDate) : undefined);
+	};
 
-function EventDatePicker({ onSelect, startDate, endDate }: Props) {
-	const onStartDateSelect = useCallback(
-		(day?: Date) => {
-			onSelect('startDate', day);
-		},
-		[onSelect]
+	const formattedStart = useMemo(
+		() => (startDate ? startDate.split('T')[0] : ''),
+		[startDate]
 	);
 
-	const onEndDateSelect = useCallback(
-		(day?: Date) => {
-			onSelect('endDate', day);
-		},
-		[onSelect]
+	const formattedEnd = useMemo(
+		() => (endDate ? endDate.split('T')[0] : ''),
+		[endDate]
 	);
-
 	return (
 		<div className={container}>
-			<div
+			<span className={title}>
+				<FilterIcon width={12} />
+				Filter by Date
+			</span>
+			<form
 				className={cx(action, {
 					[action___focused]: !!(startDate && endDate),
 				})}
 			>
-				<CalendarIcon width={20} />
-
-				<div className={action__placeholder}>
-					<DayPickerInput
-						onDayChange={onStartDateSelect}
+				<label className={action__placeholder}>
+					Start
+					<input
+						type="date"
+						name="startDate"
 						placeholder="Start Date"
-						value={startDate}
-						dayPickerProps={
-							endDate && {
-								disabledDays: {
-									after: endDate,
-								},
-							}
-						}
+						onChange={onDateSelect}
+						value={formattedStart}
+						max={formattedEnd}
+						className={input}
 					/>
-					{startDate ? (
-						<Clear onClick={() => onStartDateSelect()} />
-					) : null}
-				</div>
-				<div className={action__placeholder}>
-					<DayPickerInput
-						onDayChange={onEndDateSelect}
-						placeholder="End Date"
-						value={endDate}
-						dayPickerProps={
-							startDate && {
-								disabledDays: {
-									before: startDate,
-								},
-							}
-						}
+				</label>
+				<label className={action__placeholder}>
+					End
+					<input
+						type="date"
+						name="endDate"
+						placeholder="Start Date"
+						onChange={onDateSelect}
+						value={formattedEnd}
+						min={formattedStart}
+						className={input}
 					/>
-				</div>
-				{endDate ? <Clear onClick={() => onEndDateSelect()} /> : null}
-			</div>
+				</label>
+			</form>
+			{startDate && endDate ? (
+				<span className={reset}>
+					<Button type="ghost" onClick={onReset} role="button">
+						Reset
+					</Button>
+				</span>
+			) : null}
 		</div>
 	);
 }
@@ -84,6 +79,12 @@ function EventDatePicker({ onSelect, startDate, endDate }: Props) {
 const container = css`
 	position: relative;
 	max-width: 100%;
+	text-align: right;
+`;
+
+const title = css`
+	font-size: 0.75rem;
+	font-weight: 300;
 `;
 
 const action = css`
@@ -110,15 +111,20 @@ const action___focused = css`
 	color: var(--primary600);
 	box-shadow: inset 0 0 0 3px var(--primary400);
 `;
-const picker = css`
-	position: absolute;
-	top: 100%;
-	right: 0;
-	display: none;
+
+const input = css`
+	border: 0;
+	padding: 2px 6px;
+	border-radius: 6px;
+	margin-left: 6px;
+	&:focus,
+	&:focus-visible {
+		border: 0;
+		box-shadow: none;
+	}
 `;
 
-const picker___show = css`
-	display: block;
+const reset = css`
+	opacity: 0.6;
 `;
-
 export default EventDatePicker;
