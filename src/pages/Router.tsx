@@ -12,6 +12,9 @@ function Router() {
 		<BrowserRouter>
 			<AppShellLayout>
 				<Switch>
+					<Route path="/:eventId">
+						<AsyncPage page="EventDetails" />
+					</Route>
 					<Route path="/">
 						<AsyncPage page="Events" />
 					</Route>

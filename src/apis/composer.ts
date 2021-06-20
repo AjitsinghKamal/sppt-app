@@ -7,6 +7,8 @@ import { AUTH_SECRET } from '../constants/env-defaults';
 export type Composer<FetchParamsType> = FetchOptions<FetchParamsType> & {
 	// if present will request api on dependency change or after mount if empty array
 	dependencies?: DependencyList;
+	// allows appending path to base url
+	path?: string;
 };
 
 /**
@@ -23,8 +25,9 @@ const ApiModuleComposer =
 
 		const runWithEffect = config.dependencies;
 
-		const { dependencies = [], ...restOptions } = config;
+		const { dependencies = [], path = '', ...restOptions } = config;
 
+		const fetchUrl = `${url}${path}`;
 		// append auth header if needed
 		if (isAuthenticated && AUTH_SECRET) {
 			restOptions.headers = {
@@ -52,7 +55,7 @@ const ApiModuleComposer =
 			dispatch({ type: 'fetch' });
 			try {
 				const response = await Http<FetchParamsType, FetchResponseType>(
-					url,
+					fetchUrl,
 					{ ...restOptions, ...requestConfig }
 				);
 				if (noAutoResponseUpdate) {

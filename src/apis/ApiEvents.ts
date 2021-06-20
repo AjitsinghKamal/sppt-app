@@ -5,6 +5,22 @@ import { Pagination } from './types';
 
 export const ENDPOINT = `${API_HOST}/events`;
 
+type EventItem = {
+	id: number;
+	endsAt: string;
+	startsAt: string;
+	position: {
+		color: string;
+		id: number;
+		name: string;
+	};
+};
+type EventEmployee = {
+	image: string;
+	lastName: string;
+	firstName: string;
+	id: number;
+};
 /** ----------
  * GET: /events
  *
@@ -19,16 +35,7 @@ export type EventListParams = {
 };
 
 export type EventListResponse = {
-	items: {
-		id: number;
-		endsAt: string;
-		startsAt: string;
-		position: {
-			color: string;
-			id: number;
-			name: string;
-		};
-	}[];
+	items: EventItem[];
 	pagination: Pagination;
 };
 
@@ -42,7 +49,10 @@ export const useEventList = ApiModuleComposer<
  *
  * fetch event detail by id
  * ------------- */
-type EventDetailsParams = {
-	id: number;
-};
-export const useEventDetails = ApiModuleComposer(ENDPOINT);
+
+export type EventDetailsResponse = {
+	employees: EventEmployee[];
+} & EventItem;
+export const useEventDetails = ApiModuleComposer<{}, EventDetailsResponse>(
+	ENDPOINT
+);

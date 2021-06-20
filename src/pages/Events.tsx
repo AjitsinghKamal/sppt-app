@@ -12,15 +12,32 @@ type State = {
 	startDate?: Date;
 	endDate?: Date;
 };
-function HomePage() {
+function EventsPage() {
 	const { response, status, request, dispatch } = useEventList({
 		dependencies: [],
+		params: {
+			limit: 10,
+		},
 	});
+
+	const items = response?.items || [];
+	const pagination = response?.pagination;
+
 	const [selectedDates, setDates] = useState<State>({
 		startDate: undefined,
 		endDate: undefined,
 	});
 
+	/**
+	 * prepares params and makes request for event filtering or
+	 * subsequent fetching
+	 *
+	 * @param params
+	 * startDate: start filter
+	 * endDate: end filter
+	 * offset: request next set of data from the offset
+	 * noAutoUpdate: used for pagination
+	 */
 	const shouldFetchEvents = async (
 		params: State & { offset?: number; noAutoUpdate?: boolean }
 	) => {
@@ -28,6 +45,7 @@ function HomePage() {
 			const data = await request(
 				{
 					params: {
+						limit: 10,
 						offset: params.offset,
 						startsAt:
 							params.startDate && formatISO(params.startDate),
@@ -36,13 +54,13 @@ function HomePage() {
 				},
 				!!params.noAutoUpdate
 			);
+
 			if (params.noAutoUpdate && data) {
-				const existingItems = response?.items || [];
 				dispatch({
 					type: 'update',
 					payload: {
 						response: {
-							items: [...existingItems, ...data.items],
+							items: [...items, ...data.items],
 							pagination: data.pagination,
 						},
 					},
@@ -50,6 +68,17 @@ function HomePage() {
 			}
 		} catch (e) {
 			console.log(e);
+		}
+	};
+
+	const shouldFilterByDate = () => {
+		if (!selectedDates.startDate && !selectedDates.endDate) {
+			// reset filter when both start and end cleared
+			shouldFetchEvents({});
+		}
+		if (selectedDates.startDate && selectedDates.endDate) {
+			// filter when both start and end present
+			shouldFetchEvents(selectedDates);
 		}
 	};
 
@@ -64,8 +93,8 @@ function HomePage() {
 	);
 
 	const handleLoadMore = useCallback(() => {
-		if (response && response.pagination) {
-			const { offset, limit, count } = response.pagination;
+		if (pagination) {
+			const { offset, limit, count } = pagination;
 			const next = offset + limit;
 			next < count &&
 				shouldFetchEvents({
@@ -73,17 +102,10 @@ function HomePage() {
 					noAutoUpdate: true,
 				});
 		}
-	}, [response?.pagination]);
+	}, [pagination]);
 
 	useEffect(() => {
-		if (!selectedDates.startDate && !selectedDates.endDate) {
-			// reset filter when both start and end cleared
-			shouldFetchEvents({});
-		}
-		if (selectedDates.startDate && selectedDates.endDate) {
-			// filter when both start and end present
-			shouldFetchEvents(selectedDates);
-		}
+		shouldFilterByDate();
 	}, [selectedDates.startDate, selectedDates.endDate]);
 
 	return (
@@ -92,12 +114,10 @@ function HomePage() {
 			<div className={filterbar}>
 				{response ? (
 					<p className={filterbar__meta}>
-						Showing<span>{response.items.length}</span>of
-						<span>{response.pagination.count}</span>
+						Showing<span>{items.length}</span>of
+						<span>{pagination?.count}</span>
 					</p>
-				) : (
-					<span>Loading...</span>
-				)}
+				) : null}
 				<EventDatePicker
 					onSelect={handleDateSelect}
 					startDate={selectedDates.startDate}
@@ -106,8 +126,8 @@ function HomePage() {
 			</div>
 			<EventList
 				loading={status === 'WAITING'}
-				list={response?.items}
-				pagination={response?.pagination}
+				list={items}
+				pagination={pagination}
 				onNext={handleLoadMore}
 			/>
 		</PageLayout>
@@ -136,4 +156,4 @@ const filterbar__meta = css`
 		font-weight: 400;
 	}
 `;
-export default HomePage;
+export default EventsPage;
