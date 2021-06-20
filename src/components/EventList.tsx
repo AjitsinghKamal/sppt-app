@@ -1,15 +1,21 @@
-import List, { Props as ListProps } from './List';
+import List from './List';
 import EventItem from './EventItem';
 import { EventListResponse } from 'src/apis/ApiEvents';
 import { css } from '@emotion/css';
 
 type Props = {
-	list: EventListResponse['items'];
-} & ListProps;
+	loading: boolean;
+	pagination?: EventListResponse['pagination'];
+	list?: EventListResponse['items'];
+};
 
-function EventList({ list, ...listProps }: Props) {
+function EventList({ list = [], pagination, loading }: Props) {
 	return (
-		<List {...listProps}>
+		<List
+			showLoader={loading}
+			showNextLoader={!!pagination?.count && loading}
+			showNotFound={!pagination?.count}
+		>
 			{list.map((event) => (
 				<li key={event.id} className={item}>
 					<EventItem

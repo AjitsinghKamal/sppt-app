@@ -1,23 +1,55 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 import { PageLayout } from 'src/layouts';
 import { useEventList } from 'src/apis/ApiEvents';
 import { EventList, EventDatePicker } from 'src/components';
+import type { EventDatePickerProps } from 'src/components';
+
 import { css } from '@emotion/css';
+import { formatISO } from 'date-fns';
 
+type State = {
+	startDate?: Date;
+	endDate?: Date;
+};
 function HomePage() {
-	const { response, status, error } = useEventList({ dependencies: [] });
-	const [selectedDates, setDates] = useState([
-		{
-			startDate: undefined,
-			endDate: undefined,
-			key: 'selection',
-		},
-	]);
+	const { response, status, request } = useEventList({
+		dependencies: [],
+	});
+	const [selectedDates, setDates] = useState<State>({
+		startDate: undefined,
+		endDate: undefined,
+	});
 
-	const handleDateSelect = useCallback(({ selection }) => {
-		setDates([selection]);
-	}, []);
+	const shouldFetchEvents = (params: State) => {
+		request({
+			params: {
+				startsAt: params.startDate && formatISO(params.startDate),
+				endsAt: params.endDate && formatISO(params.endDate),
+			},
+		});
+	};
+
+	const handleDateSelect = useCallback<EventDatePickerProps['onSelect']>(
+		(key, selection) => {
+			setDates({
+				...selectedDates,
+				[key]: selection,
+			});
+		},
+		[selectedDates, setDates]
+	);
+
+	useEffect(() => {
+		if (!selectedDates.startDate && !selectedDates.endDate) {
+			// reset filter when both start and end cleared
+			shouldFetchEvents({});
+		}
+		if (selectedDates.startDate && selectedDates.endDate) {
+			// filter when both start and end present
+			shouldFetchEvents(selectedDates);
+		}
+	}, [selectedDates.startDate, selectedDates.endDate]);
 
 	return (
 		<PageLayout>
@@ -33,13 +65,14 @@ function HomePage() {
 				)}
 				<EventDatePicker
 					onSelect={handleDateSelect}
-					selectedDates={selectedDates}
+					startDate={selectedDates.startDate}
+					endDate={selectedDates.endDate}
 				/>
 			</div>
 			<EventList
-				list={response?.items || []}
-				total={response?.pagination.count}
-				offset={response?.pagination.offset}
+				loading={status === 'WAITING'}
+				list={response?.items}
+				pagination={response?.pagination}
 			/>
 		</PageLayout>
 	);
@@ -52,6 +85,11 @@ const filterbar = css`
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
+	position: sticky;
+	background: var(--white400);
+	top: var(--header-h);
+	padding: 6px 0;
+	box-shadow: 0 0 0 10px var(--white400);
 `;
 
 const filterbar__meta = css`

@@ -36,7 +36,7 @@ const ApiModuleComposer = <FetchParamsType, FetchResponseType>(
 		try {
 			const response = await Http<FetchParamsType, FetchResponseType>(
 				url,
-				requestConfig
+				{ ...restOptions, ...requestConfig }
 			);
 			dispatch({
 				type: 'update',

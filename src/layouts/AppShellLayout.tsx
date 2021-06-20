@@ -28,6 +28,7 @@ const content = css`
 	display: flex;
 	align-items: center;
 	flex-direction: column;
+	height: 100vh;
 `;
 
 export default AppShellLayout;

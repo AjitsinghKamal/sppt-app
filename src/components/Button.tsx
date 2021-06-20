@@ -1,15 +1,15 @@
 import { css, cx } from '@emotion/css';
 import { PropsWithChildren, DOMAttributes } from 'react';
 
-type Props = {
+export type Props = {
 	type?: 'solid' | 'outline' | 'ghost';
-};
+} & DOMAttributes<HTMLButtonElement>;
 
 function Button({
 	children,
 	type = 'solid',
 	...rest
-}: PropsWithChildren<Props> & DOMAttributes<HTMLButtonElement>) {
+}: PropsWithChildren<Props>) {
 	return (
 		<button
 			{...rest}
@@ -42,7 +42,7 @@ const btn__solid = css`
 
 const btn__ghost = css`
 	background: transparent;
-	padding: 12px;
+	padding: 6px;
 	&:hover {
 		color: var(--primary600);
 	}
