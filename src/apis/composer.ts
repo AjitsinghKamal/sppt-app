@@ -1,7 +1,8 @@
 import { useMemo, useEffect, DependencyList } from 'react';
-import useResponseState from 'src/hooks/UseResponseState';
 import Http, { FetchOptions } from './http';
-import { AUTH_SECRET } from 'src/constants/env-defaults';
+
+import useResponseState from '../hooks/UseResponseState';
+import { AUTH_SECRET } from '../constants/env-defaults';
 
 export type Composer<FetchParamsType> = FetchOptions<FetchParamsType> & {
 	// if present will request api on dependency change or after mount if empty array
@@ -14,67 +15,82 @@ export type Composer<FetchParamsType> = FetchOptions<FetchParamsType> & {
  * @param config fetch compliant config
  * @param isAuthenticated adds authoirisation header to request
  */
-const ApiModuleComposer = <FetchParamsType, FetchResponseType>(
-	url: string,
-	config: Composer<FetchParamsType>,
-	isAuthenticated: boolean = true
-) => {
-	const { responseState, dispatch } = useResponseState<FetchResponseType>();
-	const { dependencies, ...restOptions } = config;
+const ApiModuleComposer =
+	<FetchParamsType, FetchResponseType>(url: string) =>
+	(config: Composer<FetchParamsType>, isAuthenticated: boolean = true) => {
+		const { responseState, dispatch } =
+			useResponseState<FetchResponseType>();
 
-	const effectDependecyList = dependencies || [];
+		const runWithEffect = config.dependencies;
 
-	if (isAuthenticated && AUTH_SECRET) {
-		restOptions.headers = {
-			...restOptions.headers,
-			Authorization: `Basic ${AUTH_SECRET}`,
-		};
-	}
+		const { dependencies = [], ...restOptions } = config;
 
-	const request = async (
-		requestConfig: FetchOptions<FetchParamsType>,
-		noAutoResponseUpdate?: boolean
-	) => {
-		dispatch({ type: 'fetch' });
-		try {
-			const response = await Http<FetchParamsType, FetchResponseType>(
-				url,
-				{ ...restOptions, ...requestConfig }
-			);
-			if (noAutoResponseUpdate) {
-				return response;
-			} else {
+		// append auth header if needed
+		if (isAuthenticated && AUTH_SECRET) {
+			restOptions.headers = {
+				...restOptions.headers,
+				Authorization: `Basic ${AUTH_SECRET}`,
+			};
+		}
+
+		/**
+		 * handles api request and update the response state on demand
+		 *
+		 * @param requestConfig
+		 * fetch options
+		 *
+		 * @param noAutoResponseUpdate
+		 * will disable auto update of response state
+		 * useful if you want to manipulate data before updating to state
+		 * for e.g updating pages for an infinite list
+		 *
+		 */
+		const request = async (
+			requestConfig: FetchOptions<FetchParamsType>,
+			noAutoResponseUpdate?: boolean
+		) => {
+			dispatch({ type: 'fetch' });
+			try {
+				const response = await Http<FetchParamsType, FetchResponseType>(
+					url,
+					{ ...restOptions, ...requestConfig }
+				);
+				if (noAutoResponseUpdate) {
+					return response;
+				} else {
+					dispatch({
+						type: 'update',
+						payload: {
+							response,
+						},
+					});
+				}
+			} catch (error) {
 				dispatch({
 					type: 'update',
 					payload: {
-						response,
+						error,
 					},
 				});
 			}
-		} catch (error) {
-			dispatch({
-				type: 'update',
-				payload: {
-					error,
-				},
-			});
-		}
+		};
+
+		useEffect(() => {
+			// if dependencies is present
+			// auto fetch the data as per dependency list
+			runWithEffect && request(restOptions);
+		}, dependencies);
+
+		const state = useMemo(
+			() => ({
+				...responseState,
+				request,
+				dispatch,
+			}),
+			[request, responseState]
+		);
+
+		return state;
 	};
-
-	useEffect(() => {
-		dependencies && request(restOptions);
-	}, effectDependecyList);
-
-	const state = useMemo(
-		() => ({
-			...responseState,
-			request,
-			dispatch,
-		}),
-		[request, responseState]
-	);
-
-	return state;
-};
 
 export default ApiModuleComposer;

@@ -1,5 +1,5 @@
 import { API_HOST } from 'src/constants/env-defaults';
-import ApiModuleComposer, { Composer } from './composer';
+import ApiModuleComposer from './composer';
 
 import { Pagination } from './types';
 
@@ -32,8 +32,10 @@ export type EventListResponse = {
 	pagination: Pagination;
 };
 
-export const useEventList = (options: Composer<EventListParams> = {}) =>
-	ApiModuleComposer<EventListParams, EventListResponse>(ENDPOINT, options);
+export const useEventList = ApiModuleComposer<
+	EventListParams,
+	EventListResponse
+>(ENDPOINT);
 
 /** ----------
  * GET: /events/:id
@@ -43,5 +45,4 @@ export const useEventList = (options: Composer<EventListParams> = {}) =>
 type EventDetailsParams = {
 	id: number;
 };
-export const useEventDetails = (options: Composer<EventDetailsParams>) =>
-	ApiModuleComposer(ENDPOINT, options);
+export const useEventDetails = ApiModuleComposer(ENDPOINT);
