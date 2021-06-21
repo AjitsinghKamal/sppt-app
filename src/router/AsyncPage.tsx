@@ -1,5 +1,7 @@
 import loadable from '@loadable/component';
-import { IS_PROD } from 'src/constants/env-defaults';
+import { Route } from 'react-router-dom';
+import { Fallback } from 'src/components';
+
 /**
  * utility component to dynamically import any page component
  *
@@ -7,13 +9,32 @@ import { IS_PROD } from 'src/constants/env-defaults';
  * since, vite will throw a warning due to no file-extension specification
  *
  */
-const AsyncPage = loadable(
+
+type Props = {
+	page: string;
+	fallback?: JSX.Element;
+	path: string;
+	[x: string]: any;
+};
+
+const DynamicPage = loadable(
 	({ page }: { page: string }) => {
 		return import(/* @vite-ignore */ `../pages/${page}.tsx`);
 	},
 	{
 		cacheKey: ({ page }) => page,
 	}
+);
+
+const AsyncPage = ({
+	page,
+	path,
+	fallback = <Fallback />,
+	...routeProps
+}: Props) => (
+	<Route path={path} {...routeProps}>
+		<DynamicPage page={page} fallback={fallback} />
+	</Route>
 );
 
 export default AsyncPage;

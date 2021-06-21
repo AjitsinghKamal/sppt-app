@@ -8,3 +8,4 @@ export type { Props as EventDatePickerProps } from './EventDatePicker';
 export { default as Avatar } from './Avatar';
 export { default as TimeSlot } from './TimeSlot';
 export { default as BackNav } from './BackNav';
+export { default as Fallback } from './Fallback';

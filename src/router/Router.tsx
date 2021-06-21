@@ -1,6 +1,7 @@
 import { BrowserRouter, Switch, Route } from 'react-router-dom';
 import { AppShellLayout } from 'src/layouts';
 import AsyncPage from './AsyncPage';
+
 /**
  * Top-Level routing config for the app
  *
@@ -11,12 +12,8 @@ function Router() {
 		<BrowserRouter>
 			<AppShellLayout>
 				<Switch>
-					<Route path="/:eventId">
-						<AsyncPage page="EventDetails" />
-					</Route>
-					<Route path="/">
-						<AsyncPage page="Events" />
-					</Route>
+					<AsyncPage path="/:eventId" page="EventDetails" />
+					<AsyncPage path="/" page="Events" />
 				</Switch>
 			</AppShellLayout>
 		</BrowserRouter>
